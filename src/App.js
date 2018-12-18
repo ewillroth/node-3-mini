@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import HistoryModal from './components/HistoryModal';
 import './App.css';
 
@@ -12,13 +13,32 @@ class App extends Component {
       messageInputDisabled: true,
       showHistory: false
     };
-    this.closeHistoryModal = this.closeHistoryModal.bind(this);
+	this.closeHistoryModal = this.closeHistoryModal.bind(this);
+	this.createMessage = this.createMessage.bind(this);
+  }
+  
+  componentDidMount(){
+	  axios
+	  .get('/api/messages')
+	  .then((response)=>this.setState({
+		  allMessages: response.data
+	  },console.log(response.data)))
+	  .catch(err=>console.log(err))
   }
 
   saveUsername() {
     if (this.state.username) {
       this.setState({ messageInputDisabled: !this.state.messageInputDisabled });
     }
+  }
+
+  createMessage() {
+	  axios
+	  .post('/api/messages', { username: this.state.username, message: this.state.message })
+	  .then((response)=>this.setState({
+		  allMessages: response.data
+	  }))
+	  .catch(err=>console.log(err))
   }
 
   showHistoryModal() {
